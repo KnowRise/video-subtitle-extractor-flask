@@ -9,7 +9,7 @@ from flask import (
     flash,
 )
 import os
-import sqlite3
+import psycopg2
 from flask_bcrypt import Bcrypt
 import ffmpeg
 from waitress import serve
@@ -17,6 +17,10 @@ from waitress import serve
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "FLASK-Secret-key"
 bcrypt = Bcrypt(app)
+
+# Ambil DATABASE_URL dari environment variables
+DATABASE_URL = os.getenv("DATABASE_URL")
+conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 
 # Menentukan folder statis untuk video dan subtitle
 app.config["STATIC_FOLDER"] = "static"  # Folder tempat file video dan subtitle
@@ -37,11 +41,10 @@ def download_file(filename):
 def login():
     if request.method == "POST":
         password = request.form["password"]
-        conn = sqlite3.connect("app.db")
         cursor = conn.cursor()
         cursor.execute("SELECT password FROM password WHERE id = 1")
         stored_password = cursor.fetchone()[0]
-        conn.close()
+        cursor.close()
 
         if bcrypt.check_password_hash(stored_password, password):
             session["logged_in"] = True
@@ -65,13 +68,10 @@ def change_password():
         new_password = request.form["password"]
         hashed_password = bcrypt.generate_password_hash(new_password).decode("utf-8")
 
-        conn = sqlite3.connect("app.db")
         cursor = conn.cursor()
-        cursor.execute(
-            "UPDATE password SET password = ? WHERE id = 1", (hashed_password,)
-        )
+        cursor.execute("UPDATE password SET password = %s WHERE id = 1", (hashed_password,))
         conn.commit()
-        conn.close()
+        cursor.close()
 
         return redirect(url_for("logout"))
 
