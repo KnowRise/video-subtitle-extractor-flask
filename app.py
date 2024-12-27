@@ -102,46 +102,55 @@ def extract_subtitle(video_path, output_vtt_path):
 
 @app.route("/dashboard", methods=["GET", "POST"])
 def dashboard():
-    video = None
-    subtitle = None
+    return "INI DASHBOARD"
+    # video = None
+    # subtitle = None
 
-    print("Dashboard request received")  # Debugging log
+    # if request.method == "POST":
+    #     # Hapus semua file di folder /static
+    #     clear_static_folder()
 
-    if request.method == "POST":
-        # Hapus semua file di folder /static
-        clear_static_folder()
+    #     # Ambil file video
+    #     video_file = request.files.get("video")
+    #     subtitle_file = request.files.get("subtitle")
 
-        video_file = request.files.get("video")
-        subtitle_file = request.files.get("subtitle")
+    #     if not video_file:
+    #         flash("Video wajib diunggah!", "error")
+    #         return redirect(url_for("dashboard"))
 
-        if not video_file:
-            flash("Video wajib diunggah!", "error")
-            return redirect(url_for("dashboard"))
+    #     # Simpan video ke folder /static
+    #     video_path = os.path.join(app.config["STATIC_FOLDER"], "video.mp4")
+    #     video_file.save(video_path)
+    #     video = "video.mp4"
 
-        # Simpan video ke folder /static
-        video_path = os.path.join(app.config["STATIC_FOLDER"], "video.mp4")
-        video_file.save(video_path)
-        video = "video.mp4"
+    #     if subtitle_file:
+    #         # Jika subtitle diunggah, cek format dan simpan sebagai .vtt
+    #         subtitle_path = os.path.join(app.config["STATIC_FOLDER"], "subtitle.vtt")
+    #         subtitle_ext = os.path.splitext(subtitle_file.filename)[1].lower()
 
-        if subtitle_file:
-            subtitle_path = os.path.join(app.config["STATIC_FOLDER"], "subtitle.vtt")
-            subtitle_ext = os.path.splitext(subtitle_file.filename)[1].lower()
+    #         if subtitle_ext == ".srt":
+    #             # Konversi .srt ke .vtt
+    #             temp_subtitle_path = os.path.join(
+    #                 app.config["STATIC_FOLDER"], "subtitle.srt"
+    #             )
+    #             subtitle_file.save(temp_subtitle_path)
+    #             ffmpeg.input(temp_subtitle_path).output(
+    #                 subtitle_path, **{"f": "webvtt"}
+    #             ).run(overwrite_output=True)
+    #             os.remove(temp_subtitle_path)  # Hapus file .srt setelah konversi
+    #         elif subtitle_ext == ".vtt":
+    #             subtitle_file.save(
+    #                 subtitle_path
+    #             )  # Simpan langsung jika sudah dalam format .vtt
+    #         subtitle = "subtitle.vtt"
+    #     else:
+    #         # Jika tidak ada subtitle eksternal, coba ekstrak dari video
+    #         subtitle_path = os.path.join(app.config["STATIC_FOLDER"], "subtitle.vtt")
+    #         if extract_subtitle(video_path, subtitle_path):
+    #             subtitle = "subtitle.vtt"
 
-            if subtitle_ext == ".srt":
-                temp_subtitle_path = os.path.join(app.config["STATIC_FOLDER"], "subtitle.srt")
-                subtitle_file.save(temp_subtitle_path)
-                ffmpeg.input(temp_subtitle_path).output(subtitle_path, **{"f": "webvtt"}).run(overwrite_output=True)
-                os.remove(temp_subtitle_path)  # Hapus file .srt setelah konversi
-            elif subtitle_ext == ".vtt":
-                subtitle_file.save(subtitle_path)
-            subtitle = "subtitle.vtt"
-        else:
-            subtitle_path = os.path.join(app.config["STATIC_FOLDER"], "subtitle.vtt")
-            if extract_subtitle(video_path, subtitle_path):
-                subtitle = "subtitle.vtt"
+    # return render_template("dashboard.html", video=video, subtitle=subtitle)
 
-    print(f"Video: {video}, Subtitle: {subtitle}")  # Debugging log
-    return render_template("dashboard.html", video=video, subtitle=subtitle)
 
 if __name__ == "__main__":
     serve(app, host="0.0.0.0", port=5000)
