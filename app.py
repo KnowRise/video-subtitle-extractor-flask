@@ -148,4 +148,4 @@ def dashboard():
     return render_template("dashboard.html", video=video, subtitle=subtitle)
 
 if __name__ == "__main__":
-    serve(app, host="0.0.0.0", port=5000)
+    serve(app, host="0.0.0.0", port=5000, debug=True)
