@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+</head>
+<body>
+    <h1>Upload Video dan Subtitle</h1>
+    <form action="{{ url_for('dashboard') }}" method="POST" enctype="multipart/form-data">
+        <label for="video">Video (wajib):</label>
+        <input type="file" id="video" name="video" accept=".mp4, .mkv" required><br><br>
+        <label for="subtitle">Subtitle (opsional):</label>
+        <input type="file" id="subtitle" name="subtitle" accept=".vtt, .srt"><br><br>
+        <button type="submit">Upload</button>
+    </form>
+
+    <video id="video-player" controls width="1000">
+        <source src="{{ url_for('download_file', filename=video) }}" type="video/mp4">
+        {% if subtitle %}
+            <track kind="subtitles" src="{{ url_for('download_file', filename=subtitle) }}" srclang="id" label="Indonesia" default>
+        {% else %}
+            <p>Subtitle tidak tersedia</p>
+        {% endif %}
+    </video>    
+</body>
+</html>
